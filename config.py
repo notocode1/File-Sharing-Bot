@@ -20,23 +20,27 @@ FORCE_SUB_CHANNEL_3 = 'YourThirdChannelID'
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
 
 # Start message
-START_MSG = os.environ.get("START_MESSAGE", "Hello {{first}}\\n\\nI can store private files in Specified Channel and other users can access it from special link.")
+START_MSG = os.environ.get("START_MESSAGE", "Hello {first}\\n\\nI can store private files in Specified Channel and other users can access it from special link.")
 
 # Force sub message 
-FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "Hello {{first}}\\n\\n<b>You need to join in my Channel/Group to use me\\n\\nKindly Please join Channel</b>")
+FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "Hello {first}\\n\\n<b>You need to join in my Channel/Group to use me\\n\\nKindly Please join Channel</b>")
 
-# Custom Caption
+# Set your custom caption here, Keep None for Disable Custom Caption
 CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", None)
 
-# Protect content
+# Set True if you want to prevent users from forwarding files from the bot
 PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False
 
-# Disable Channel Button
+# Set true if you want to disable your channel posts share button
 DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", None) == 'True'
 
-BOT_STATS_TEXT = "<b>BOT UPTIME</b>\\n{{uptime}}"
-USER_REPLY_TEXT = "❌ Don't send me messages directly I'm only a File Share bot!"
+# Bot Stats Message
+BOT_STATS_TEXT = "<b>BOT UPTIME</b>\\n{uptime}"
 
+# User Reply Text when they send direct messages
+USER_REPLY_TEXT = "❌ Don't send me messages directly! I'm only a file-sharing bot."
+
+# Logging configuration
 LOG_FILE_NAME = "filesharingbot.txt"
 
 logging.basicConfig(
@@ -55,5 +59,15 @@ logging.basicConfig(
 
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
+try:
+    ADMINS = []
+    for admin_id in os.environ.get("ADMINS", "").split():
+        ADMINS.append(int(admin_id))
+except ValueError:
+    raise Exception("Your Admins list does not contain valid integers.")
+
+ADMINS.append(OWNER_ID)
+
+# Function to retrieve logger instances
 def LOGGER(name: str) -> logging.Logger:
     return logging.getLogger(name)
